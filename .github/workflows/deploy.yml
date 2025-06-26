@@ -31,9 +31,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
           publish_dir: ./build # or ./dist if your Vite build outputs to dist
           # For single page applications, set cname and enable history api fallback
           # cname: your-custom-domain.com # Uncomment if you have a custom domain
           # enable_jekyll: false # Set to false if you are not using Jekyll
-          history_api_fallback: true # Useful for React Router or SPA routing
-          publish_branch: gh-pages
+          # history_api_fallback: true # Useful for React Router or SPA routing
