@@ -35,4 +35,5 @@ jobs:
           # For single page applications, set cname and enable history api fallback
           # cname: your-custom-domain.com # Uncomment if you have a custom domain
           # enable_jekyll: false # Set to false if you are not using Jekyll
-          # history_api_fallback: true # Useful for React Router or SPA routing
+          history_api_fallback: true # Useful for React Router or SPA routing
+          publish_branch: gh-pages
