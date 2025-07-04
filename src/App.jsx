@@ -254,11 +254,9 @@ const App = () => {
       };
       console.log('Description API payload prepared.');
 
-      // Removed API key injection for client-side
       const apiKey = typeof __app_id !== 'undefined' ? "" : import.meta.env.VITE_GEMINI_API_KEY;
 
-      // Placeholder for backend URL for description
-      const describeApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=`; // Placeholder for backend call
+      const describeApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
       console.log('Calling Description API:', describeApiUrl);
 
       const describeResponse = await fetch(describeApiUrl, {
@@ -313,8 +311,7 @@ const App = () => {
       const generateImage = async () => {
         const modelId = 'imagen-3.0-generate-002'; // Hardcoded model ID
         const generatePayload = { instances: { prompt: generatePrompt }, parameters: { "sampleCount": 1} };
-        // Placeholder for backend URL for image generation
-        const generateApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:predict?key=`; // Placeholder for backend call
+        const generateApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:predict?key=${apiKey}`;
         console.log(`Calling Image Generation API (${modelId}):`, generateApiUrl);
 
         let response;
@@ -1013,15 +1010,7 @@ const App = () => {
     <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16 p-4">
       {/* Outer container for the entire app, now with a fixed max-w-lg */}
       <div className="w-full max-w-lg mx-auto text-center flex-grow">
-        {/* Header with Logo */}
-        <div className="flex items-center justify-center mb-6">
-          <img
-            src="public/favicon.png" // Updated to reference the local public/favicon.png
-            alt="App Logo"
-            className="w-8 h-8 mr-2 object-contain"
-          />
-          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
-        </div>
+        <h1 className="text-xl font-normal text-gray-900 mb-6">Real Photo Camera 3100</h1>
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
