@@ -1041,7 +1041,7 @@ const App = () => {
         >
           {showSideBySide ? (
             // Side-by-Side Comparison View for 2 images (Original and Standard Generated)
-            <div className="flex flex-row gap-2 justify-center items-center w-full h-auto">
+            <div className="flex flex-row gap-.3 justify-center items-center w-full h-auto">
               {originalImageDataUrl && (
                 <div className="flex flex-col justify-center items-center h-full w-1/2 p-1"> {/* Adjusted width to 1/2 */}
                   <img
