@@ -206,7 +206,7 @@ const App = () => {
     setProgress(0); // Reset progress to 0 on retry
     setErrorMessage('');
     setGeneratedImageUrlStandard(null); // Clear previous standard generated image
-    // Removed: setGeneratedImageUrlFast(null);
+    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0); // Ensure generated image is hidden at start of process
     setShowSideBySide(false); // Hide side-by-side view when starting new process
     setDescriptionText(''); // Clear previous description when starting a new process
@@ -655,7 +655,7 @@ const App = () => {
 
     // Reset states relevant to starting a new camera session
     setGeneratedImageUrlStandard(null);
-    // Removed: setGeneratedImageUrlFast(null);
+    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0);
     setOriginalImageDataUrl(null);
     setLastProcessedImageDataUrl(null); // Clear last processed image on new camera session
@@ -837,7 +837,7 @@ const App = () => {
 
     // Reset all states when a new file is selected
     setGeneratedImageUrlStandard(null);
-    // Removed: setGeneratedImageUrlFast(null);
+    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0); // Ensure opacity is reset
     setOriginalImageDataUrl(null); // Clear previous original image data URL
     setLastProcessedImageDataUrl(null); // Clear last processed image on new file selection
@@ -1010,16 +1010,24 @@ const App = () => {
     <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16 p-4">
       {/* Outer container for the entire app, now with a fixed max-w-lg */}
       <div className="w-full max-w-lg mx-auto text-center flex-grow">
-        <h1 className="text-xl font-normal text-gray-900 mb-6">Real Photo Camera 3100</h1>
+        {/* Header with Logo */}
+        <div className="flex items-center justify-center mb-6">
+          <img
+            src="public/favicon.png" // Reference to the local public/favicon.png
+            alt="App Logo"
+            className="w-8 h-8 mr-2 object-contain"
+          />
+          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
+        </div>
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
           <div
             onClick={handleDebugClick}
-            className="w-10 h-10 bg-gray-100/20 rounded-sm cursor-pointer border border-gray-100/20" // Changed size and color
+            className="w-10 h-10 bg-transparent rounded-sm cursor-pointer border border-gray-100/20" // Changed background to transparent
           ></div>
           {showDebugMessage && (
-            <span className="ml-2 px-2 py-1 bg-gray-700 text-white text-xs rounded-md shadow-md"> {/* Removed animate-fade-in-out */}
+            <span className="ml-2 px-2 py-1 bg-gray-700 text-white text-xs rounded-md shadow-md">
               {debugMessage}
             </span>
           )}
@@ -1160,7 +1168,7 @@ const App = () => {
         )}
 
         {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
-        {isDebugMode && !isProcessing && generatedImageUrlStandard && ( // Condition updated: removed generatedImageUrlFast check
+        {!isProcessing && generatedImageUrlStandard && (
           <div className="mt-6 flex flex-col space-y-3 items-center">
             <button
               onClick={() => setShowSideBySide(!showSideBySide)}
@@ -1254,10 +1262,14 @@ const App = () => {
           )}
         </div> {/* End of bottom buttons/progress container */}
 
-        {/* Error message display (now below all buttons), only visible in debug mode */}
-        {isDebugMode && errorMessage && (
+        {/* Error message display */}
+        {errorMessage && (
           <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center">
-            <p>{errorMessage}</p>
+            {isDebugMode ? (
+              <p>{errorMessage}</p>
+            ) : (
+              <p>Error taking photo.</p>
+            )}
           </div>
         )}
 
