@@ -1013,7 +1013,7 @@ const App = () => {
         {/* Header with Logo */}
         <div className="flex items-center justify-center mb-6">
           <img
-            src="public/favicon.png" // Reference to the local public/favicon.png
+            src="/favicon.png" // Reference to the local /favicon.png
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
