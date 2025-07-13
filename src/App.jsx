@@ -787,7 +787,7 @@ const App = () => {
       sy = 0;
     } else { // Video is taller or square (e.g., 9:16 or 1:1)
       sWidth = originalVideoWidth;
-      sHeight = originalVideoWidth; // Take a square from the width
+      sHeight = originalWidth; // Take a square from the width
       sx = 0;
       sy = (originalVideoHeight - sHeight) / 2;
     }
@@ -1008,13 +1008,13 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white"> {/* Removed pt-16 here */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
       `}>
         {/* Header with Logo */}
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-6 mt-16"> {/* Added mt-16 here */}
           <img
             src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png" // Changed to direct URL
             alt="App Logo"
