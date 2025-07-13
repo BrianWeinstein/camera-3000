@@ -1135,12 +1135,12 @@ const App = () => {
         {isCameraActive && (
           <div className="mt-4 flex flex-col items-center justify-center w-full space-y-4 z-20">
             {/* Container for Capture and Switch buttons */}
-            <div className="relative w-full h-24 flex items-center justify-center"> {/* Added h-24 */}
+            <div className="relative w-full text-center"> {/* Removed flex items-center justify-center, added text-center */}
               {/* Capture Photo Button (iOS style) - Centered horizontally */}
               <button
                 onClick={handleCapturePhoto}
                 disabled={!isCaptureReady}
-                className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out absolute left-1/2 -translate-x-1/2
+                className={`w-16 h-16 rounded-full flex-shrink-0 inline-block items-center justify-center transition duration-200 ease-in-out
                            ${isCaptureReady ? 'border-4 border-black bg-white shadow-md hover:bg-gray-100' : 'border-4 border-gray-600 bg-gray-200 cursor-not-allowed'}`}
               >
                 <div className={`w-12 h-12 rounded-full ${isCaptureReady ? 'bg-black' : 'bg-gray-400'}`}></div> {/* Inner black circle */}
