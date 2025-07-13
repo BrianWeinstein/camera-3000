@@ -1008,7 +1008,7 @@ const App = () => {
 
 
   return (
-    <div className="min-h-dvh flex flex-col items-center font-serif bg-white"> {/* Removed pt-16 here */}
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white"> {/* Removed pt-16 here */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
@@ -1295,7 +1295,7 @@ const App = () => {
           </div>
         )}
       </div>
-      {/* Small text at the very bottom */}
+            {/* Small text at the very bottom */}
       <div className="mt-8 text-xs text-gray-400 text-center">
         <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
         <br></br>
