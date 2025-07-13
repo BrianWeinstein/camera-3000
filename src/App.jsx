@@ -1293,8 +1293,7 @@ const App = () => {
       </div>
             {/* Small text at the very bottom */}
       <div className="mt-8 text-xs text-gray-400 text-center">
-        {/* <p>Learn more.</p> */}
-        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank">Learn more.</a></p>
+        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
         <br></br>
       </div>
     </div>

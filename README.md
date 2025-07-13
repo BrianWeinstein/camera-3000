@@ -1,12 +1,21 @@
-# React + Vite
+# Real Photo Camera 3100
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A silly little camera webapp. Half engineering project, half art project.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Given a photo, the app first uses the Gemini API to generate a detailed description of the photo. Next, the description is then used as a prompt for the Imagen API, which creates a new version of the original image.
 
-## Expanding the ESLint configuration
+The new image is errily similar to the original. _What is a photo?_
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech stack
+The app uses React and Tailwind.
+
+## Bad code
+Gemini wrote the majority of this code (AI writing an AI app), and part of the fun of this project was doing anything and everything Gemini told me to do. It instructed me to do some stupid stuff, like publicly exposing my API key (fear not: I put some hard restricitons on the key's usage).
+
+## License & usage
+
+MIT License, Copyright (c) 2025 Brian Weinstein. See [LICENSE](LICENSE) for more info.
+
+Don't use this app for bad stuff.
