@@ -235,7 +235,7 @@ const App = () => {
       const imageMimeType = mimeType.split(':')[1];
       console.log('Image MIME type:', imageMimeType);
 
-      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name.`;
+      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name. If people appear in the photo, describe their apperances in detail.`;
       const describePayload = {
         contents: [
           {
@@ -371,7 +371,8 @@ const App = () => {
             try {
               const errorData = await response.json();
               errorText = errorData.error?.message || JSON.stringify(errorData);
-            } catch (e) {
+            }
+            catch (e) {
               errorText = await response.text();
             }
             if (response.status === 401) {
@@ -1007,18 +1008,26 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16 p-4">
-      {/* Outer container for the entire app, now with a fixed max-w-lg */}
-      <div className="w-full max-w-lg mx-auto text-center flex-grow">
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
+      {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
+      <div className={`w-full mx-auto text-center flex-grow
+        ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
+      `}>
         {/* Header with Logo */}
         <div className="flex items-center justify-center mb-6">
           <img
-            src="favicon.png"
+            src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png" // Changed to direct URL
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
-          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
+          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3000</h1>
         </div>
+
+      {/* Small text below title */}
+      {/* <div className="mt-8 text-s text-gray-700 text-center">
+        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
+      </div> */}
+
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
@@ -1034,16 +1043,16 @@ const App = () => {
         </div>
 
         {/* Unified Image Display Area */}
-        <div className={`mt-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto
-          ${showSideBySide ? 'w-full' : 'bg-gray-100 rounded-md'}
+        <div className={`mt-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md
+          ${showSideBySide ? 'h-[320px]' : 'w-[320px] h-[320px] bg-gray-100'} {/* Changed h-auto to h-[320px] */}
         `}
-        style={{ width: '320px', height: '320px' }}
+        style={showSideBySide ? { width: 'min(95vw, 550px)' } : {}}
         >
           {showSideBySide ? (
             // Side-by-Side Comparison View for 2 images (Original and Standard Generated)
-            <div className="flex flex-row gap-.3 justify-center items-center w-full h-auto">
+            <div className="flex flex-row gap-2 justify-center items-center w-full h-auto">
               {originalImageDataUrl && (
-                <div className="flex flex-col justify-center items-center h-full w-1/2 p-1"> {/* Adjusted width to 1/2 */}
+                <div className="flex flex-col justify-center items-center h-full w-1/2 p-0">
                   <img
                     src={originalImageDataUrl}
                     alt="Original Photo"
@@ -1053,7 +1062,7 @@ const App = () => {
                 </div>
               )}
               {generatedImageUrlStandard && (
-                <div className="flex flex-col justify-center items-center h-full w-1/2 p-1"> {/* Adjusted width to 1/2 */}
+                <div className="flex flex-col justify-center items-center h-full w-1/2 p-0">
                   <img
                     src={generatedImageUrlStandard}
                     alt="Enhanced Photo (Standard)"
@@ -1174,7 +1183,7 @@ const App = () => {
               onClick={() => setShowSideBySide(!showSideBySide)}
               className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md w-fit mx-auto"
             >
-              {showSideBySide ? 'Back to Enhanced' : 'Compare Original'} {/* Text updated */}
+              {showSideBySide ? 'Back to Enhanced' : 'Compare Original'}
             </button>
           </div>
         )}
@@ -1276,11 +1285,15 @@ const App = () => {
         {/* Description text display at the very bottom, only visible in debug mode */}
         {isDebugMode && descriptionText && (
           <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed">
-            <p className="font-semibold mb-2">Description:</p>
+            {/* <p className="font-semibold mb-2">Description:</p> */}
             <p className="whitespace-pre-wrap">{descriptionText}</p>
           </div>
         )}
       </div>
+      {/* Small text at the very bottom */}
+      {/* <div className="mt-8 text-s text-gray-700 text-center">
+        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
+      </div> */}
     </div>
   );
 };
