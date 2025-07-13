@@ -787,7 +787,7 @@ const App = () => {
       sy = 0;
     } else { // Video is taller or square (e.g., 9:16 or 1:1)
       sWidth = originalVideoWidth;
-      sHeight = originalVideoWidth; // Take a square from the width
+      sHeight = originalWidth; // Take a square from the width
       sx = 0;
       sy = (originalVideoHeight - sHeight) / 2;
     }
@@ -1008,13 +1008,13 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white"> {/* Removed pt-16 here */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
       `}>
         {/* Header with Logo */}
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-6 mt-16"> {/* Added mt-16 here */}
           <img
             src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png" // Changed to direct URL
             alt="App Logo"
@@ -1022,10 +1022,6 @@ const App = () => {
           />
           <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
         </div>
-
-      {/* <div className="mt-8 text-s text-gray-900 text-center">
-        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
-      </div> */}
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
@@ -1244,6 +1240,18 @@ const App = () => {
             </div>
           )}
 
+          {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
+          {!isProcessing && generatedImageUrlStandard && (
+            <div className="mt-6 flex flex-col space-y-3 items-center">
+              <button
+                onClick={() => setShowSideBySide(!showSideBySide)}
+                className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
+              >
+                {showSideBySide ? 'Back to Enhanced' : 'Compare'}
+              </button>
+            </div>
+          )}
+
           {/* Progress bar overlay - always visible when processing */}
           {isProcessing && (
             <div className="mt-4 text-center">
@@ -1264,18 +1272,6 @@ const App = () => {
           )}
         </div> {/* End of bottom buttons/progress container */}
 
-        {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
-        {!isProcessing && generatedImageUrlStandard && (
-          <div className="mt-6 flex flex-col space-y-3 items-center">
-            <button
-              onClick={() => setShowSideBySide(!showSideBySide)}
-              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
-            >
-              {showSideBySide ? 'Back to Enhanced' : 'Compare'}
-            </button>
-          </div>
-        )}
-
         {/* Error message display */}
         {errorMessage && (
           <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
@@ -1295,10 +1291,12 @@ const App = () => {
           </div>
         )}
       </div>
-      {/* Small text at the very bottom */}
-      {/* <div className="mt-8 text-s text-gray-900 text-center">
-        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
-      </div> */}
+            {/* Small text at the very bottom */}
+      <div className="mt-8 text-xs text-gray-400 text-center">
+        {/* <p>Learn more.</p> */}
+        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank">Learn more.</a></p>
+        <br></br>
+      </div>
     </div>
   );
 };
