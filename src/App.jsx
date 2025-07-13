@@ -1174,9 +1174,9 @@ const App = () => {
             {/* Cancel Camera Button (on its own line) */}
             <button
               onClick={stopCamera}
-              className="py-1 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out text-gray-400 hover:text-gray-600"
+                className="mt-4 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 hover:bg-gray-400"
             >
-              Cancel Camera
+              Close Camera
             </button>
           </div>
         )}
@@ -1186,9 +1186,9 @@ const App = () => {
           <div className="mt-6 flex flex-col space-y-3 items-center">
             <button
               onClick={() => setShowSideBySide(!showSideBySide)}
-              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md w-fit mx-auto"
+              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
             >
-              {showSideBySide ? 'Back to Enhanced' : 'Compare Original'}
+              {showSideBySide ? 'Back to Enhanced' : 'Compare'}
             </button>
           </div>
         )}
@@ -1270,7 +1270,7 @@ const App = () => {
                 onClick={handleCancelProcess}
                 className="mt-4 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 hover:bg-gray-400"
               >
-                Cancel Photo
+                Cancel
               </button>
             </div>
           )}
