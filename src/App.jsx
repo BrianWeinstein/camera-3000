@@ -1133,33 +1133,31 @@ const App = () => {
 
         {/* Camera Action Buttons (Capture/Cancel/Switch) - directly below the photo/retry button */}
         {isCameraActive && (
-          <div className="mt-4 relative flex flex-col items-center justify-center w-full space-y-4">
-            {/* Container for Capture and Switch buttons, directly below the video feed */}
-            <div className="relative w-full flex items-center justify-center" style={{ height: '96px' }}>
+          <div className="mt-4 flex flex-col items-center justify-center w-full space-y-4 z-20">
+            {/* Container for Capture and Switch buttons */}
+            <div className="relative w-full h-24 flex items-center justify-center"> {/* Added h-24 */}
               {/* Capture Photo Button (iOS style) - Centered horizontally */}
               <button
                 onClick={handleCapturePhoto}
                 disabled={!isCaptureReady}
                 className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out absolute left-1/2 -translate-x-1/2
                            ${isCaptureReady ? 'border-4 border-black bg-white shadow-md hover:bg-gray-100' : 'border-4 border-gray-600 bg-gray-200 cursor-not-allowed'}`}
-                style={{ bottom: '16px' }}
               >
                 <div className={`w-12 h-12 rounded-full ${isCaptureReady ? 'bg-black' : 'bg-gray-400'}`}></div> {/* Inner black circle */}
               </button>
 
-              {/* Switch Camera Button (iOS style) - Smaller, aligned right */}
+              {/* Switch Camera Button (iOS style) - Smaller, aligned right relative to the center button */}
               <button
                 onClick={switchCamera}
                 className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-500 shadow-md absolute"
-                // Adjusted left position to be 20px right of the capture button's right edge
-                style={{ bottom: '28px', left: 'calc(50% + (64px / 2) + 20px)' }}
+                style={{ left: 'calc(50% + 62px)' }} /* Adjusted position */
               >
                 {/* Reload / Two Arrows Circle SVG Icon (black) */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="100%" height="100%" // Use percentages to scale within button size
+                  width="100%" height="100%"
                   version="1.1" viewBox="0 0 100 100"
-                  fill="black" // Set fill to black for the icon
+                  fill="black"
                 >
                   <path d="m81 59.898c-1.8984-0.89844-4.1016 0-5 1.8984-6.5 14.402-23.5 20.703-37.801 14.203-6.8008-3.1016-12-8.6016-14.801-15.5l4.8008 2.1992c1.8984 0.89844 4.1016 0 5-1.8984 0.89844-1.8984 0-4.1016-1.8984-5l-12.801-5.8008c-1.8984-0.89844-4.1016 0-5 1.8984l-5.6992 12.801c-0.89844 1.8984 0 4.1016 1.8984 5 1.8984 0.89844 4.1016 0 5-1.8984l1.8984-4.1992c3.5 8.6016 10 15.398 18.5 19.301 18.102 8.1992 39.602 0.19922 47.801-18 0.80078-1.9023 0-4.1016-1.8984-5.0039z"/>
                   <path d="m24 38.199c6.5-14.398 23.5-20.699 37.801-14.199 6.8008 3.1016 12 8.6016 14.801 15.5l-4.8008-2.1992c-1.8984-0.89844-4.1016 0-5 1.8984-0.89844 1.8984 0 4.1016 1.8984 5l12.801 5.8008c1.8984 0.89844 4.1016 0 5-1.8984l5.8008-12.801c0.89844-1.8984 0-4.1016-1.8984-5-1.8984-0.89844-4.1016 0-5 1.8984l-1.8984 4.1992c-3.5-8.6016-10-15.398-18.5-19.301-18.102-8.1992-39.602-0.19922-47.801 18-0.89844 1.8984 0 4.1016 1.8984 5 1.7969 0.80078 4 0.003906 4.8984-1.8984z"/>
@@ -1167,7 +1165,7 @@ const App = () => {
               </button>
             </div>
 
-            {/* Cancel Camera Button (on its own line) */}
+            {/* Close Camera Button */}
             <button
               onClick={stopCamera}
                 className="mt-4 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 hover:bg-gray-400"
