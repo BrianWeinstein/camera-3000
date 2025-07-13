@@ -1020,14 +1020,12 @@ const App = () => {
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
-          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3000</h1>
+          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
         </div>
 
-      {/* Small text below title */}
-      {/* <div className="mt-8 text-s text-gray-700 text-center">
+      {/* <div className="mt-8 text-s text-gray-900 text-center">
         <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
       </div> */}
-
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
@@ -1044,13 +1042,13 @@ const App = () => {
 
         {/* Unified Image Display Area */}
         <div className={`mt-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md
-          ${showSideBySide ? 'h-[320px]' : 'w-[320px] h-[320px] bg-gray-100'} {/* Changed h-auto to h-[320px] */}
+          ${showSideBySide ? 'h-[320px]' : 'w-[320px] h-[320px] bg-gray-100'} {/* Fixed height for compare mode */}
         `}
         style={showSideBySide ? { width: 'min(95vw, 550px)' } : {}}
         >
           {showSideBySide ? (
             // Side-by-Side Comparison View for 2 images (Original and Standard Generated)
-            <div className="flex flex-row gap-2 justify-center items-center w-full h-auto">
+            <div className="flex flex-row gap-1.5 justify-center items-center w-full h-auto">
               {originalImageDataUrl && (
                 <div className="flex flex-col justify-center items-center h-full w-1/2 p-0">
                   <img
@@ -1068,7 +1066,7 @@ const App = () => {
                     alt="Enhanced Photo (Standard)"
                     className="max-w-full max-h-full object-contain rounded-md border border-gray-300"
                   />
-                  <p className="text-xs mt-1 text-gray-600">Standard</p>
+                  <p className="text-xs mt-1 text-gray-600">Enhanced</p>
                 </div>
               )}
             </div>
@@ -1079,7 +1077,7 @@ const App = () => {
                 <>
                   <video
                     ref={videoRef}
-                    className="rounded-md w-full h-full object-cover relative z-0"
+                    className="rounded-md w-full h-full object-contain relative z-0" // object-contain for camera
                     playsInline
                     autoPlay
                     muted
@@ -1090,6 +1088,13 @@ const App = () => {
                     className="absolute inset-0 w-full h-full rounded-md object-cover pointer-events-none z-10"
                   ></canvas>
                 </>
+              )}
+
+              {/* Gray placeholder box */}
+              {!isCameraActive && !isProcessing && !generatedImageUrlStandard && !originalImageDataUrl && (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 rounded-md">
+                  {/* <p>Upload or take a photo</p> */}
+                </div>
               )}
 
               {/* Canvas for processing pixelation effect (when not camera active) */}
@@ -1172,18 +1177,6 @@ const App = () => {
               className="py-1 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out text-gray-400 hover:text-gray-600"
             >
               Cancel Camera
-            </button>
-          </div>
-        )}
-
-        {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
-        {!isProcessing && generatedImageUrlStandard && (
-          <div className="mt-6 flex flex-col space-y-3 items-center">
-            <button
-              onClick={() => setShowSideBySide(!showSideBySide)}
-              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md w-fit mx-auto"
-            >
-              {showSideBySide ? 'Back to Enhanced' : 'Compare Original'}
             </button>
           </div>
         )}
@@ -1271,9 +1264,21 @@ const App = () => {
           )}
         </div> {/* End of bottom buttons/progress container */}
 
+        {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
+        {!isProcessing && generatedImageUrlStandard && (
+          <div className="mt-6 flex flex-col space-y-3 items-center">
+            <button
+              onClick={() => setShowSideBySide(!showSideBySide)}
+              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md w-fit mx-auto"
+            >
+              {showSideBySide ? 'Back to Enhanced' : 'Compare'}
+            </button>
+          </div>
+        )}
+
         {/* Error message display */}
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center">
+          <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
             {isDebugMode ? (
               <p>{errorMessage}</p>
             ) : (
@@ -1284,14 +1289,14 @@ const App = () => {
 
         {/* Description text display at the very bottom, only visible in debug mode */}
         {isDebugMode && descriptionText && (
-          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed">
-            {/* <p className="font-semibold mb-2">Description:</p> */}
+          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
+            <p className="font-semibold mb-2">Description:</p>
             <p className="whitespace-pre-wrap">{descriptionText}</p>
           </div>
         )}
       </div>
       {/* Small text at the very bottom */}
-      {/* <div className="mt-8 text-s text-gray-700 text-center">
+      {/* <div className="mt-8 text-s text-gray-900 text-center">
         <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
       </div> */}
     </div>
