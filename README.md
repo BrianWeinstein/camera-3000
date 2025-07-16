@@ -1,6 +1,6 @@
 # Real Photo Camera 3100
 
-A silly little camera webapp. Half engineering project, half art project.
+A silly little camera webapp.
 
 ## Description
 
@@ -8,11 +8,8 @@ Given a photo, the app first uses the Gemini API to generate a detailed descript
 
 The new image is errily similar to the original. _What is a photo?_
 
-## Tech stack
-The app uses React and Tailwind.
-
 ## Bad code
-Gemini wrote the majority of this code (AI writing an AI app), and part of the fun of this project was doing anything and everything Gemini told me to do. It instructed me to do some stupid stuff, like publicly exposing my API key (fear not: I put some hard restricitons on the key's usage).
+Gemini wrote the majority of this code (AI writing an AI app), and part of the fun of this project was doing anything and everything Gemini told me to do. It instructed me to do some stupid stuff, like publicly exposing my API key (fear not: I put some hard restricitons on the key's usage). Errors are handled poorly too. A lot of this code is garbage.
 
 ## License & usage
 
