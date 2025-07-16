@@ -787,7 +787,7 @@ const App = () => {
       sy = 0;
     } else { // Video is taller or square (e.g., 9:16 or 1:1)
       sWidth = originalVideoWidth;
-      sHeight = originalWidth; // Take a square from the width
+      sHeight = originalVideoWidth; // Take a square from the width
       sx = 0;
       sy = (originalVideoHeight - sHeight) / 2;
     }
@@ -1008,7 +1008,7 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16">
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
@@ -1194,7 +1194,7 @@ const App = () => {
         )}
 
         {/* Container for initial buttons (Open Camera/Upload) and Progress Bar */}
-        <div className="mt-auto flex flex-col justify-center items-center">
+        <div className="mt-auto pt-6 flex flex-col justify-center items-center">
           {/* Combined Open Camera / Upload Photo Button */}
           {!isCameraActive && !isProcessing && (
             <div className="flex rounded-lg shadow-lg overflow-hidden w-full max-w-64">
@@ -1295,9 +1295,10 @@ const App = () => {
           </div>
         )}
       </div>
-      {/* Small text at the very bottom - MOVED INSIDE FLEX-GROW DIV */}
-      <div className="py-4 text-xs text-gray-400 text-center"> {/* Changed mt-8 to py-4 */}
+            {/* Small text at the very bottom */}
+      <div className="mt-8 text-xs text-gray-400 text-center">
         <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
+        <br></br>
       </div>
     </div>
   );
