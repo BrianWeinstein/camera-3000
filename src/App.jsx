@@ -1008,7 +1008,7 @@ const App = () => {
 
 
   return (
-    <div className="min-h-dvh flex flex-col items-center font-serif bg-white pt-16"> {/* Changed min-h-screen to min-h-dvh */}
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16">
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
