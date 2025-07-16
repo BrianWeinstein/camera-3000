@@ -1041,7 +1041,7 @@ const App = () => {
         </div>
 
         {/* Unified Image Display Area */}
-        <div className={`mt-6 mb-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md
+        <div className={`mt-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md
           ${showSideBySide ? 'h-[320px]' : 'w-[320px] h-[320px] bg-gray-100'} {/* Fixed height for compare mode */}
         `}
         style={showSideBySide ? { width: 'min(95vw, 550px)' } : {}}
@@ -1295,8 +1295,8 @@ const App = () => {
           </div>
         )}
       </div>
-      {/* Small text at the very bottom - MOVED OUTSIDE FLEX-GROW DIV */}
-      <div className="py-4 text-xs text-gray-400 text-center">
+      {/* Small text at the very bottom - MOVED INSIDE FLEX-GROW DIV */}
+      <div className="py-4 text-xs text-gray-400 text-center"> {/* Changed mt-8 to py-4 */}
         <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
       </div>
     </div>
