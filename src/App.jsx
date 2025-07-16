@@ -787,7 +787,7 @@ const App = () => {
       sy = 0;
     } else { // Video is taller or square (e.g., 9:16 or 1:1)
       sWidth = originalVideoWidth;
-      sHeight = originalWidth; // Take a square from the width
+      sHeight = originalVideoWidth; // Take a square from the width
       sx = 0;
       sy = (originalVideoHeight - sHeight) / 2;
     }
@@ -1008,13 +1008,13 @@ const App = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center font-serif bg-white">
+    <div className="min-h-screen flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
         ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
       `}>
         {/* Header with Logo */}
-        <div className="flex items-center justify-center mb-6 mt-16">
+        <div className="flex items-center justify-center mb-6">
           <img
             src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png" // Changed to direct URL
             alt="App Logo"
@@ -1022,6 +1022,10 @@ const App = () => {
           />
           <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
         </div>
+
+      {/* <div className="mt-8 text-s text-gray-900 text-center">
+        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
+      </div> */}
 
         {/* Debug Mode Toggle Square and Message */}
         <div className="fixed bottom-2 left-2 flex items-center z-50">
@@ -1133,26 +1137,26 @@ const App = () => {
 
         {/* Camera Action Buttons (Capture/Cancel/Switch) - directly below the photo/retry button */}
         {isCameraActive && (
-          <div className="mt-4 flex flex-col items-center justify-center w-full space-y-4">
+          <div className="mt-4 relative flex flex-col items-center justify-center w-full space-y-4">
             {/* Container for Capture and Switch buttons, directly below the video feed */}
-            {/* Removed fixed height, using flex for centering */}
-            <div className="w-full flex items-center justify-center gap-4"> {/* Added gap-4 for spacing */}
-              {/* Capture Photo Button (iOS style) - Centered horizontally using flex */}
+            <div className="relative w-full flex items-center justify-center" style={{ height: '96px' }}>
+              {/* Capture Photo Button (iOS style) - Centered horizontally */}
               <button
                 onClick={handleCapturePhoto}
                 disabled={!isCaptureReady}
-                className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out
+                className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out absolute left-1/2 -translate-x-1/2
                            ${isCaptureReady ? 'border-4 border-black bg-white shadow-md hover:bg-gray-100' : 'border-4 border-gray-600 bg-gray-200 cursor-not-allowed'}`}
-                // Removed absolute positioning styles here
+                style={{ bottom: '16px' }}
               >
                 <div className={`w-12 h-12 rounded-full ${isCaptureReady ? 'bg-black' : 'bg-gray-400'}`}></div> {/* Inner black circle */}
               </button>
 
-              {/* Switch Camera Button (iOS style) - Smaller, aligned right relative to the capture button */}
+              {/* Switch Camera Button (iOS style) - Smaller, aligned right */}
               <button
                 onClick={switchCamera}
-                className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-500 shadow-md"
-                // Removed absolute positioning styles here, will be positioned by flexbox
+                className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-500 shadow-md absolute"
+                // Adjusted left position to be 20px right of the capture button's right edge
+                style={{ bottom: '28px', left: 'calc(50% + (64px / 2) + 20px)' }}
               >
                 {/* Reload / Two Arrows Circle SVG Icon (black) */}
                 <svg
@@ -1190,7 +1194,7 @@ const App = () => {
         )}
 
         {/* Container for initial buttons (Open Camera/Upload) and Progress Bar */}
-        <div className="mt-auto flex flex-col justify-center items-center">
+        <div className="mt-auto pt-6 flex flex-col justify-center items-center">
           {/* Combined Open Camera / Upload Photo Button */}
           {!isCameraActive && !isProcessing && (
             <div className="flex rounded-lg shadow-lg overflow-hidden w-full max-w-64">
@@ -1274,7 +1278,7 @@ const App = () => {
 
         {/* Error message display */}
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto">
+          <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
             {isDebugMode ? (
               <p>{errorMessage}</p>
             ) : (
@@ -1285,15 +1289,16 @@ const App = () => {
 
         {/* Description text display at the very bottom, only visible in debug mode */}
         {isDebugMode && descriptionText && (
-          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto">
+          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
             <p className="font-semibold mb-2">Description:</p>
             <p className="whitespace-pre-wrap">{descriptionText}</p>
           </div>
         )}
       </div>
-      {/* Small text at the very bottom */}
+            {/* Small text at the very bottom */}
       <div className="mt-8 text-xs text-gray-400 text-center">
         <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
+        <br></br>
       </div>
     </div>
   );
