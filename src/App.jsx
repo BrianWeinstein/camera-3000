@@ -13,7 +13,7 @@ const easeOutQuadWithMinSpeed = (t, minFactor) => {
 
 // Main App component
 const App = () => {
-  console.log('App component rendered');
+  // console.log('App component rendered');
 
   // State for the data URL of the original image (cropped square version)
   const [originalImageDataUrl, setOriginalImageDataUrl] = useState(null);
@@ -22,7 +22,6 @@ const App = () => {
 
   // State for the generated image URL (Standard Quality)
   const [generatedImageUrlStandard, setGeneratedImageUrlStandard] = useState(null);
-  // Removed: State for the generated image URL (Fast Quality) - no longer needed
 
   // State to control the opacity of the generated images for fade-in effect
   const [generatedImageOpacity, setGeneratedImageOpacity] = useState(0);
@@ -43,17 +42,10 @@ const App = () => {
   // State to control side-by-side comparison view (now for original and one generated image)
   const [showSideBySide, setShowSideBySide] = useState(false);
 
-  // Debug mode state: default to false for users, can be toggled
+  // Debug mode state: default to false upon load
   const [isDebugMode, setIsDebugMode] = useState(false);
-
-  // States for debug mode click handling
-  const [clickCount, setClickCount] = useState(0);
-  const lastClickTimeRef = useRef(0);
-  const clickTimeoutRef = useRef(null);
-  // New state for debug mode message
-  const [debugMessage, setDebugMessage] = useState('');
-  const [showDebugMessage, setShowDebugMessage] = useState(false);
-  const debugMessageTimeoutRef = useRef(null);
+  // New state for Compare Mode toggle
+  const [isCompareModeEnabled, setIsCompareModeEnabled] = useState(true);
 
 
   // Refs for canvas and the loaded original image
@@ -77,6 +69,8 @@ const App = () => {
   const randomSlowDownPointRef = useRef(null);
   const preFinishProgressRef = useRef(0);
 
+  // Define the target aspect ratio (width / height)
+  const TARGET_ASPECT_RATIO = 0.7; // This is 7:10 (width:height)
 
   // Function to draw the loading effect on the canvas (combining pixelation, color quantization, and scanlines)
   // Now accepts 'sourceElement' which can be an Image or Video
@@ -114,28 +108,31 @@ const App = () => {
     // Ensure source has valid dimensions
     if (sourceWidth === 0 || sourceHeight === 0) return;
 
-    // Calculate source rectangle to crop the center square
-    const sourceAspectRatio = sourceWidth / sourceHeight;
+    // Calculate source rectangle to crop the center TARGET_ASPECT_RATIO
     let sx, sy, sWidth, sHeight;
 
-    if (sourceAspectRatio > 1) { // Source is wider than tall (e.g., 16:9 video)
+    const sourceAspectRatio = sourceWidth / sourceHeight;
+
+    if (sourceAspectRatio > TARGET_ASPECT_RATIO) { // Source is wider than TARGET_ASPECT_RATIO
       sHeight = sourceHeight;
-      sWidth = sourceHeight; // Take a square from the height
+      sWidth = sourceHeight * TARGET_ASPECT_RATIO;
       sx = (sourceWidth - sWidth) / 2;
       sy = 0;
-    } else { // Source is taller or square (e.g., 9:16 video or square image)
+    } else { // Source is taller or TARGET_ASPECT_RATIO
       sWidth = sourceWidth;
-      sHeight = sourceWidth; // Take a square from the width
+      sHeight = sourceWidth / TARGET_ASPECT_RATIO;
       sx = 0;
       sy = (sourceHeight - sHeight) / 2;
     }
 
-    // tempCanvas will now be square, representing the cropped source
+
+    // tempCanvas will now be TARGET_ASPECT_RATIO, representing the cropped source
     const tempCanvas = document.createElement('canvas');
     const tempCtx = tempCanvas.getContext('2d');
-    const desiredTempSize = 1024; // Arbitrary high resolution for pixel sampling
-    tempCanvas.width = desiredTempSize;
-    tempCanvas.height = desiredTempSize;
+    const desiredTempWidth = 1024; // Arbitrary high resolution for pixel sampling
+    const desiredTempHeight = Math.round((1/TARGET_ASPECT_RATIO) * desiredTempWidth);
+    tempCanvas.width = desiredTempWidth;
+    tempCanvas.height = desiredTempHeight;
 
     // Draw the cropped section of the source onto the temp canvas, scaling it to desiredTempSize x desiredTempSize
     tempCtx.drawImage(
@@ -146,8 +143,8 @@ const App = () => {
       sHeight,    // sHeight: height of the source rectangle
       0,          // dx: x-coordinate of the top-left corner of the destination rectangle
       0,          // dy: y-coordinate of the top-left corner of the destination rectangle
-      desiredTempSize, // dWidth: width of the destination rectangle
-      desiredTempSize  // dHeight: height of the destination rectangle
+      desiredTempWidth, // dWidth: width of the destination rectangle
+      desiredTempHeight  // dHeight: height of the destination rectangle
     );
 
     const normalizedProgress = currentProgress / 100;
@@ -206,7 +203,6 @@ const App = () => {
     setProgress(0); // Reset progress to 0 on retry
     setErrorMessage('');
     setGeneratedImageUrlStandard(null); // Clear previous standard generated image
-    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0); // Ensure generated image is hidden at start of process
     setShowSideBySide(false); // Hide side-by-side view when starting new process
     setDescriptionText(''); // Clear previous description when starting a new process
@@ -235,7 +231,7 @@ const App = () => {
       const imageMimeType = mimeType.split(':')[1];
       console.log('Image MIME type:', imageMimeType);
 
-      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name. If people appear in the photo, describe their apperances in detail.`;
+      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name. If people appear in the photo, describe their apperances (skin tone, facial features, etc.) in detail.`;
       const describePayload = {
         contents: [
           {
@@ -310,7 +306,7 @@ const App = () => {
       // Modified generateImage function - now takes no arguments
       const generateImage = async () => {
         const modelId = 'imagen-3.0-generate-002'; // Hardcoded model ID
-        const generatePayload = { instances: { prompt: generatePrompt }, parameters: { "sampleCount": 1} };
+        const generatePayload = { instances: { prompt: generatePrompt }, parameters: { "sampleCount": 1, "aspectRatio": "3:4", "personGeneration": "allow_all", "safetySetting":"block_low_and_above"} }; // Using "7:10" for consistency
         const generateApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:predict?key=${apiKey}`;
         console.log(`Calling Image Generation API (${modelId}):`, generateApiUrl);
 
@@ -428,7 +424,6 @@ const App = () => {
     setProgress(0);
     setErrorMessage('');
     setGeneratedImageUrlStandard(null);
-    // Removed: setGeneratedImageUrlFast(null);
     setGeneratedImageOpacity(0);
     setOriginalImageDataUrl(null); // Clear original image data
     setLastProcessedImageDataUrl(null); // Clear last processed image data
@@ -579,7 +574,7 @@ const App = () => {
         }
       } else {
         setProgress(0); // Reset if not processing and no result/error
-        setGeneratedImageOpacity(0); // Ensure generated images are hidden
+        setGeneratedImageOpacity(0); // Ensure generated images is hidden
         if (ctx && canvas) { // Only clear if no error and no generated images
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
@@ -592,7 +587,7 @@ const App = () => {
         clearInterval(progressIntervalRef.current);
       }
     };
-  }, [isProcessing, generatedImageUrlStandard, errorMessage, isCameraActive]); // Removed generatedImageUrlFast from dependencies
+  }, [isProcessing, generatedImageUrlStandard, errorMessage, isCameraActive]);
 
   // NEW useEffect for live camera pixelation effect
   useEffect(() => {
@@ -635,7 +630,7 @@ const App = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
     };
-  }, [isCameraActive, isProcessing, errorMessage]); // Re-run when camera active or processing state changes
+  }, [isCameraActive, isProcessing, errorMessage]);
 
 
   // --- CAMERA FUNCTIONS ---
@@ -656,7 +651,6 @@ const App = () => {
 
     // Reset states relevant to starting a new camera session
     setGeneratedImageUrlStandard(null);
-    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0);
     setOriginalImageDataUrl(null);
     setLastProcessedImageDataUrl(null); // Clear last processed image on new camera session
@@ -768,31 +762,35 @@ const App = () => {
       return;
     }
 
-    // Create a temporary canvas to draw the video frame at the desired output resolution (1024x1024)
+    // Define target output dimensions for 7:10 aspect ratio
+    const desiredOutputWidth = 1024;
+    const desiredOutputHeight = Math.round((1 / TARGET_ASPECT_RATIO) * desiredOutputWidth); // 1024 * (10/7) = 1462.85 -> 1463
+
+    // Create a temporary canvas to draw the video frame at the desired output resolution (7:10)
     const captureCanvas = document.createElement('canvas');
     const captureCtx = captureCanvas.getContext('2d');
 
-    const desiredOutputSize = 1024; // User wants 1024x1024 output
-    captureCanvas.width = desiredOutputSize;
-    captureCanvas.height = desiredOutputSize;
+    captureCanvas.width = desiredOutputWidth;
+    captureCanvas.height = desiredOutputHeight;
 
-    // Calculate source rectangle to crop the center square from the video feed
-    const videoAspectRatio = originalVideoWidth / originalVideoHeight;
+    // Calculate source rectangle to crop the center 7:10 from the video feed
     let sx, sy, sWidth, sHeight;
 
-    if (videoAspectRatio > 1) { // Video is wider than tall (e.g., 16:9)
+    const videoAspectRatio = originalVideoWidth / originalVideoHeight;
+
+    if (videoAspectRatio > TARGET_ASPECT_RATIO) { // Video is wider than 7:10
       sHeight = originalVideoHeight;
-      sWidth = originalVideoHeight; // Take a square from the height
+      sWidth = originalVideoHeight * TARGET_ASPECT_RATIO;
       sx = (originalVideoWidth - sWidth) / 2;
       sy = 0;
-    } else { // Video is taller or square (e.g., 9:16 or 1:1)
+    } else { // Video is taller or 7:10
       sWidth = originalVideoWidth;
-      sHeight = originalVideoWidth; // Take a square from the width
+      sHeight = originalVideoWidth / TARGET_ASPECT_RATIO;
       sx = 0;
       sy = (originalVideoHeight - sHeight) / 2;
     }
 
-    // Draw the cropped section of the video onto the capture canvas, scaling it to 1024x1024
+    // Draw the cropped section of the video onto the capture canvas, scaling it to 7:10
     captureCtx.drawImage(
       video,
       sx,         // sx: x-coordinate of the top-left corner of the source rectangle
@@ -801,12 +799,12 @@ const App = () => {
       sHeight,    // sHeight: height of the source rectangle
       0,          // dx: x-coordinate of the top-left corner of the destination rectangle
       0,          // dy: y-coordinate of the top-left corner of the destination rectangle
-      desiredOutputSize, // dWidth: width of the destination rectangle
-      desiredOutputSize  // dHeight: height of the destination rectangle
+      desiredOutputWidth, // dWidth: width of the destination rectangle
+      desiredOutputHeight  // dHeight: height of the destination rectangle
     );
 
     const croppedDataUrl = captureCanvas.toDataURL('image/png');
-    console.log(`Captured video frame, cropped and scaled to square: ${desiredOutputSize}x${desiredOutputSize}`);
+    console.log(`Captured video frame, cropped and scaled to 7:10: ${desiredOutputWidth}x${desiredOutputHeight}`);
 
     // Set the original image data URL for display/comparison
     setOriginalImageDataUrl(croppedDataUrl);
@@ -838,7 +836,6 @@ const App = () => {
 
     // Reset all states when a new file is selected
     setGeneratedImageUrlStandard(null);
-    // Removed: State for the generated image URL (Fast Quality) - no longer needed
     setGeneratedImageOpacity(0); // Ensure opacity is reset
     setOriginalImageDataUrl(null); // Clear previous original image data URL
     setLastProcessedImageDataUrl(null); // Clear last processed image on new file selection
@@ -860,31 +857,35 @@ const App = () => {
           const originalWidth = originalLoadedImage.width;
           const originalHeight = originalLoadedImage.height;
 
-          // Create a temporary canvas for cropping to 1024x1024
+          // Define target output dimensions for 7:10 aspect ratio
+          const desiredOutputWidth = 1024;
+          const desiredOutputHeight = Math.round((1 / TARGET_ASPECT_RATIO) * desiredOutputWidth); // 1024 * (10/7) = 1462.85 -> 1463
+
+          // Create a temporary canvas for cropping to 7:10
           const croppedCanvas = document.createElement('canvas');
           const croppedCtx = croppedCanvas.getContext('2d');
 
-          const desiredOutputSize = 1024; // User wants 1024x1024 output
-          croppedCanvas.width = desiredOutputSize;
-          croppedCanvas.height = desiredOutputSize;
+          croppedCanvas.width = desiredOutputWidth;
+          croppedCanvas.height = desiredOutputHeight;
 
-          // Calculate source rectangle to crop the center square from the original image
-          const imageAspectRatio = originalWidth / originalHeight;
+          // Calculate source rectangle to crop the center 7:10 from the original image
           let sx, sy, sWidth, sHeight;
 
-          if (imageAspectRatio > 1) { // Image is wider than tall
+          const imageAspectRatio = originalWidth / originalHeight;
+
+          if (imageAspectRatio > TARGET_ASPECT_RATIO) { // Image is wider than 7:10
               sHeight = originalHeight;
-              sWidth = originalHeight;
+              sWidth = originalHeight * TARGET_ASPECT_RATIO;
               sx = (originalWidth - sWidth) / 2;
               sy = 0;
-          } else { // Image is taller or square
+          } else { // Image is taller or 7:10
               sWidth = originalWidth;
-              sHeight = originalWidth;
+              sHeight = originalWidth / TARGET_ASPECT_RATIO;
               sx = 0;
               sy = (originalHeight - sHeight) / 2;
           }
 
-          // Draw the cropped section of the original image onto the new canvas, scaling it to 1024x1024
+          // Draw the cropped section of the original image onto the new canvas, scaling it to 7:10
           croppedCtx.drawImage(
               originalLoadedImage,
               sx,         // sx
@@ -893,12 +894,12 @@ const App = () => {
               sHeight,    // sHeight
               0,          // dx
               0,          // dy
-              desiredOutputSize, // dWidth
-              desiredOutputSize  // dHeight
+              desiredOutputWidth, // dWidth
+              desiredOutputHeight  // dHeight
           );
 
           const croppedDataUrl = croppedCanvas.toDataURL('image/png');
-          console.log(`Original image cropped and scaled to square dimensions: ${desiredOutputSize}x${desiredOutputSize}`);
+          console.log(`Original image cropped and scaled to 7:10 dimensions: ${desiredOutputWidth}x${desiredOutputHeight}`);
 
           // Store the cropped image data URL for side-by-side comparison
           setOriginalImageDataUrl(croppedDataUrl);
@@ -931,142 +932,70 @@ const App = () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
-      // Clear debug click timeout on unmount
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current);
-      }
-      // Clear debug message timeout on unmount
-      if (debugMessageTimeoutRef.current) {
-        clearTimeout(debugMessageTimeoutRef.current);
-      }
     };
   }, []); // Run only once on mount and unmount
 
-  const handleDebugClick = () => {
-    const currentTime = Date.now();
+  // Function to toggle debug mode
+  const handleToggleDebugMode = () => {
+    setIsDebugMode(prevMode => !prevMode);
+  };
 
-    if (isDebugMode) {
-      // If currently in debug mode, a single click exits debug mode
-      setIsDebugMode(false);
-      setClickCount(0); // Reset for next entry
-      lastClickTimeRef.current = 0;
-      if (clickTimeoutRef.current) {
-        clearTimeout(clickTimeoutRef.current);
-        clickTimeoutRef.current = null;
-      }
-      // Show "Debug Mode: Off" for 1 second
-      setDebugMessage('Debug Mode: Off');
-      setShowDebugMessage(true);
-      if (debugMessageTimeoutRef.current) {
-        clearTimeout(debugMessageTimeoutRef.current);
-      }
-      debugMessageTimeoutRef.current = setTimeout(() => {
-        setShowDebugMessage(false);
-        setDebugMessage(''); // Clear message after it disappears
-      }, 1000); // 1 second
-    } else {
-      // If not in debug mode, try to enter (5 clicks within 1 second)
-      let newClickCount;
-
-      // If this is the first click in a potential sequence, or if the previous sequence timed out
-      if (clickCount === 0 || (currentTime - lastClickTimeRef.current > 1000)) {
-        newClickCount = 1;
-        lastClickTimeRef.current = currentTime;
-        // Set a timeout to reset clickCount if no more clicks within 1 second
-        if (clickTimeoutRef.current) {
-          clearTimeout(clickTimeoutRef.current);
-        }
-        clickTimeoutRef.current = setTimeout(() => {
-          setClickCount(0);
-          lastClickTimeRef.current = 0;
-          clickTimeoutRef.current = null;
-        }, 1000);
-      } else {
-        // Increment click count within the 1-second window
-        newClickCount = clickCount + 1;
-      }
-      setClickCount(newClickCount);
-
-      // Check if 5 clicks occurred within the time limit
-      if (newClickCount === 5 && (currentTime - lastClickTimeRef.current <= 1000)) {
-        setIsDebugMode(true);
-        setClickCount(0); // Reset for next exit
-        lastClickTimeRef.current = 0;
-        if (clickTimeoutRef.current) {
-          clearTimeout(clickTimeoutRef.current);
-          clickTimeoutRef.current = null;
-        }
-        // Show "Debug Mode: On" persistently
-        setDebugMessage('Debug Mode: On');
-        setShowDebugMessage(true);
-        if (debugMessageTimeoutRef.current) {
-          clearTimeout(debugMessageTimeoutRef.current); // Clear any old "Off" timeout
-        }
-      }
+  // Function to toggle compare mode
+  const handleToggleCompareMode = () => {
+    setIsCompareModeEnabled(prevMode => !prevMode);
+    // If compare mode is turned off, also hide side-by-side view
+    if (isCompareModeEnabled) {
+      setShowSideBySide(false);
     }
   };
 
 
   return (
-    <div className="min-h-dvh flex flex-col items-center font-serif bg-white pt-16"> {/* Removed p-4 here */}
+    <div className="min-h-dvh flex flex-col items-center font-sans bg-white pt-5"> {/* Reduced pt-8 to pt-4 */}
       {/* Outer container for the entire app, now conditionally adjusts max-width and padding */}
       <div className={`w-full mx-auto text-center flex-grow
-        ${showSideBySide ? 'px-2' : 'max-w-lg px-4'} {/* Conditional padding added here */}
+        ${showSideBySide ? 'px-2' : 'max-w-lg px-4'}
       `}>
         {/* Header with Logo */}
-        <div className="flex items-center justify-center mb-6">
+        <div
+          className="flex items-center justify-center mb-0 cursor-pointer" /* Reduced mb-6 to mb-4 */
+          onClick={handleCancelProcess} // Add onClick handler here
+        >
           <img
-            src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png" // Changed to direct URL
+            src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png"
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
-          <h1 className="text-xl font-normal text-gray-900">Real Photo Camera 3100</h1>
-        </div>
-
-      {/* <div className="mt-8 text-s text-gray-900 text-center">
-        <p>Lorem ipsum. Tktktk. Tktktk. Tktktk.</p>
-      </div> */}
-
-        {/* Debug Mode Toggle Square and Message */}
-        <div className="fixed bottom-2 left-2 flex items-center z-50">
-          <div
-            onClick={handleDebugClick}
-            className="w-10 h-10 bg-transparent rounded-sm cursor-pointer border border-gray-100/20" // Changed background to transparent
-          ></div>
-          {showDebugMessage && (
-            <span className="ml-2 px-2 py-1 bg-gray-700 text-white text-xs rounded-md shadow-md">
-              {debugMessage}
-            </span>
-          )}
+          <h1 className="text-xl font-normal text-gray-900">Camera 3000</h1>
         </div>
 
         {/* Unified Image Display Area */}
-        <div className={`mt-6 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md
-          ${showSideBySide ? 'h-[320px]' : 'w-[320px] h-[320px] bg-gray-100'} {/* Fixed height for compare mode */}
+        <div className={`mt-4 relative flex flex-col justify-center items-center overflow-hidden mx-auto rounded-md  border-gray-000
+          w-[298px] h-[426px] bg-gray-000 {/* Fixed dimensions for 7:10 ratio */}
         `}
-        style={showSideBySide ? { width: 'min(95vw, 550px)' } : {}}
+        style={showSideBySide ? { width: 'min(95vw, 550px)', height: '426px' } : {}}
         >
           {showSideBySide ? (
             // Side-by-Side Comparison View for 2 images (Original and Standard Generated)
-            <div className="flex flex-row gap-1.5 justify-center items-center w-full h-auto">
+            <div className="flex flex-row gap-1.5 justify-center items-center w-full h-full"> {/* Changed h-auto to h-full */}
               {originalImageDataUrl && (
                 <div className="flex flex-col justify-center items-center h-full w-1/2 p-0">
                   <img
                     src={originalImageDataUrl}
-                    alt="Original Photo"
-                    className="max-w-full max-h-full object-contain rounded-md border border-gray-300"
+                    className="max-w-full max-h-full object-contain rounded-md border border-gray-200"
+                    alt="Boring old camera photo"
                   />
-                  <p className="text-xs mt-1 text-gray-600">Original</p>
+                  <p className="text-xs mt-1 text-gray-600">Boring old camera</p>
                 </div>
               )}
               {generatedImageUrlStandard && (
                 <div className="flex flex-col justify-center items-center h-full w-1/2 p-0">
                   <img
                     src={generatedImageUrlStandard}
-                    alt="Enhanced Photo (Standard)"
-                    className="max-w-full max-h-full object-contain rounded-md border border-gray-300"
+                    className="max-w-full max-h-full object-contain rounded-md border border-gray-200"
+                    alt="Camera 3000 photo"
                   />
-                  <p className="text-xs mt-1 text-gray-600">Enhanced</p>
+                  <p className="text-xs mt-1 text-gray-600">Camera 3000</p>
                 </div>
               )}
             </div>
@@ -1077,7 +1006,7 @@ const App = () => {
                 <>
                   <video
                     ref={videoRef}
-                    className="rounded-md w-full h-full object-contain relative z-0" // object-contain for camera
+                    className="rounded-md w-full h-full object-contain relative z-0"
                     playsInline
                     autoPlay
                     muted
@@ -1115,29 +1044,17 @@ const App = () => {
               {!isCameraActive && !isProcessing && !generatedImageUrlStandard && originalImageDataUrl && (
                 <img
                     src={originalImageDataUrl}
-                    alt="Original Photo"
                     className="w-full h-full object-contain mx-auto rounded-md"
+                    alt="Boring old camera photo"
                 />
               )}
             </>
           )}
         </div>
 
-        {/* Retry button (immediately below the photo) */}
-        {errorMessage && lastProcessedImageDataUrl && (
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => handleGenerateImageProcess(lastProcessedImageDataUrl)}
-              className="py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-            >
-              Back to Enhanced
-            </button>
-          </div>
-        )}
-
         {/* Camera Action Buttons (Capture/Cancel/Switch) - directly below the photo/retry button */}
         {isCameraActive && (
-          <div className="mt-4 relative flex flex-col items-center justify-center w-full space-y-4">
+          <div className="mt-0 relative flex flex-col items-center justify-center w-full space-y-0"> {/* Reduced mt-4 to mt-2, space-y-4 to space-y-2 */}
             {/* Container for Capture and Switch buttons, directly below the video feed */}
             <div className="relative w-full flex items-center justify-center" style={{ height: '96px' }}>
               {/* Capture Photo Button (iOS style) - Centered horizontally */}
@@ -1145,10 +1062,10 @@ const App = () => {
                 onClick={handleCapturePhoto}
                 disabled={!isCaptureReady}
                 className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center transition duration-200 ease-in-out absolute left-1/2 -translate-x-1/2
-                           ${isCaptureReady ? 'border-4 border-black bg-white shadow-md hover:bg-gray-100' : 'border-4 border-gray-600 bg-gray-200 cursor-not-allowed'}`}
+                           ${isCaptureReady ? 'border-4 border-black bg-white shadow-md hover:bg-gray-100' : 'border-4 border-gray-400 bg-gray-100 cursor-not-allowed'}`}
                 style={{ bottom: '16px' }}
               >
-                <div className={`w-12 h-12 rounded-full ${isCaptureReady ? 'bg-black' : 'bg-gray-400'}`}></div> {/* Inner black circle */}
+                <div className={`w-12 h-12 rounded-full transition duration-200 ${isCaptureReady ? 'bg-black' : 'bg-gray-400'}`}></div> {/* Inner black circle */}
               </button>
 
               {/* Switch Camera Button (iOS style) - Smaller, aligned right */}
@@ -1174,7 +1091,7 @@ const App = () => {
             {/* Cancel Camera Button (on its own line) */}
             <button
               onClick={stopCamera}
-                className="mt-4 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 hover:bg-gray-400"
+                className="mt-0 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-100 text-gray-800 text-xs hover:bg-gray-400"
             >
               Close Camera
             </button>
@@ -1182,26 +1099,26 @@ const App = () => {
         )}
 
         {/* Action Buttons: Compare/Back Button - appears only after images are generated AND processing is complete */}
-        {!isProcessing && generatedImageUrlStandard && (
-          <div className="mt-6 flex flex-col space-y-3 items-center">
+        {!isProcessing && generatedImageUrlStandard && !errorMessage && isCompareModeEnabled && ( // Conditionally render based on isCompareModeEnabled
+          <div className="mt-4 flex flex-col space-y-3 items-center">
             <button
               onClick={() => setShowSideBySide(!showSideBySide)}
-              className="py-2 px-4 text-sm rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
+              className="py-2 px-4 text-xs rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
             >
-              {showSideBySide ? 'Back to Enhanced' : 'Compare'}
+              {showSideBySide ? 'Back' : 'Compare'}
             </button>
           </div>
         )}
 
         {/* Container for initial buttons (Open Camera/Upload) and Progress Bar */}
-        <div className="mt-auto pt-6 flex flex-col justify-center items-center">
+        <div className="mt-auto pt-4 flex flex-col justify-center items-center">
           {/* Combined Open Camera / Upload Photo Button */}
           {!isCameraActive && !isProcessing && (
-            <div className="flex rounded-lg shadow-lg overflow-hidden w-full max-w-64">
+            <div className="flex rounded-lg shadow-lg overflow-hidden w-60 max-w-64">
               {/* Left 75% for Camera */}
               <button
                 onClick={handleOpenCamera}
-                className="flex-grow w-3/4 py-3 px-2 bg-green-500 text-white hover:bg-green-600 transition duration-200 ease-in-out inline-flex items-center justify-center rounded-l-lg"
+                className="flex-grow w-3/4 py-3 px-2 bg-blue-600 text-white hover:bg-blue-600 transition duration-200 ease-in-out inline-flex items-center justify-center rounded-l-lg"
               >
                 {/* Corrected Camera SVG */}
                 <svg
@@ -1229,7 +1146,7 @@ const App = () => {
               {/* Right 25% for Upload (Dropdown Icon) */}
               <label
                 htmlFor="select-photo"
-                className="w-1/4 py-3 px-2 bg-green-500 text-white hover:bg-green-600 transition duration-200 ease-in-out inline-flex items-center justify-center rounded-r-lg border-l-2 border-white cursor-pointer"
+                className="w-1/4 py-3 px-2 bg-blue-600 text-white hover:bg-blue-600 transition duration-200 ease-in-out inline-flex items-center justify-center rounded-r-lg border-l-2 border-white cursor-pointer"
               >
                 <svg
                   className="w-4 h-4"
@@ -1258,8 +1175,8 @@ const App = () => {
 
           {/* Progress bar overlay - always visible when processing */}
           {isProcessing && (
-            <div className="mt-4 text-center">
-              <div className="w-[320px] bg-gray-200 rounded-md h-2.5 mx-auto">
+            <div className="mt-2 text-center">
+              <div className="w-[298px] bg-gray-100 rounded-md h-2.5 mx-auto">
                 <div
                   className="bg-blue-500 h-2.5 rounded-md transition-all duration-50 ease-linear"
                   style={{ width: `${progress}%` }}
@@ -1268,7 +1185,7 @@ const App = () => {
               {/* "Cancel Photo" button */}
               <button
                 onClick={handleCancelProcess}
-                className="mt-4 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 hover:bg-gray-400"
+                className="mt-2 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 text-xs hover:bg-gray-400"
               >
                 Cancel
               </button>
@@ -1278,7 +1195,7 @@ const App = () => {
 
         {/* Error message display */}
         {errorMessage && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
+          <div className="mt-2 p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-center max-w-lg mx-auto">
             {isDebugMode ? (
               <p>{errorMessage}</p>
             ) : (
@@ -1289,16 +1206,81 @@ const App = () => {
 
         {/* Description text display at the very bottom, only visible in debug mode */}
         {isDebugMode && descriptionText && (
-          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto"> {/* Added max-w-lg mx-auto */}
-            <p className="font-semibold mb-2">Description:</p>
+          <div className="mt-4 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto">
+            {/* <p className="font-semibold mb-2">Description:</p> */}
             <p className="whitespace-pre-wrap">{descriptionText}</p>
           </div>
         )}
       </div>
-            {/* Small text at the very bottom */}
-      <div className="mt-8 text-xs text-gray-400 text-center">
-        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank"><u>About</u></a></p>
-        <br></br>
+      {/* Small text at the very bottom */}
+      <div className="mt-4 mb-1 text-[9.5px] text-gray-400 text-center flex items-center justify-center space-x-2"> {/* Reduced mt-8 to mt-4, mb-2 to mb-1 */}
+        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank" className="hover:underline">About</a></p>
+        <p>•</p> {/* Separator */}
+        {/* Debug Mode Toggle Switch */}
+        <div className="flex items-center space-x-1">
+          <span className="text-gray-400">Debug</span>
+          <button
+            onClick={handleToggleDebugMode}
+            className={`relative inline-flex h-4 w-9 items-center rounded-full transition-colors duration-200 ease-in-out 
+              ${isDebugMode ? 'bg-gray-100' : 'bg-gray-100'}
+            `}
+          >
+            <span
+              className={`inline-block h-2 w-2 transform rounded-full transition-transform duration-200 ease-in-out shadow-md shadow-gray-200
+                ${isDebugMode ? 'translate-x-[22px] bg-white' : 'translate-x-[4px] bg-white'}
+              `}
+            ></span>
+            <span
+              className={`absolute right-1 text-[8.5px]  font-bold font-sans transition-opacity duration-200 ease-in-out
+                ${isDebugMode ? 'text-white opacity-0' : 'text-gray-400 opacity-100'}
+              `}
+              style={{ top: '50%', transform: 'translateY(-50%)' }}
+            >
+              Off
+            </span>
+            <span
+              className={`absolute left-1.5 text-[8.5px]  font-bold font-sans transition-opacity duration-200 ease-in-out
+                ${isDebugMode ? 'text-gray-400 opacity-100' : 'text-gray-400 opacity-0'}
+              `}
+              style={{ top: '50%', transform: 'translateY(-50%)' }}
+            >
+              On
+            </span>
+          </button>
+        </div>
+        <p>•</p> {/* Separator */}
+        {/* Compare Mode Toggle Switch */}
+        <div className="flex items-center space-x-1">
+          <span className="text-gray-400">Compare</span>
+          <button
+            onClick={handleToggleCompareMode}
+            className={`relative inline-flex h-4 w-9 items-center rounded-full transition-colors duration-200 ease-in-out
+              ${isCompareModeEnabled ? 'bg-gray-100' : 'bg-gray-100'}
+            `}
+          >
+            <span
+              className={`inline-block h-2 w-2 transform rounded-full transition-transform duration-200 ease-in-out shadow-md shadow-gray-200
+                ${isCompareModeEnabled ? 'translate-x-[22px] bg-white' : 'translate-x-[4px] bg-white'}
+              `}
+            ></span>
+            <span
+              className={`absolute right-1 text-[8.5px]  font-bold font-sans transition-opacity duration-200 ease-in-out
+                ${isCompareModeEnabled ? 'text-white opacity-0' : 'text-gray-400 opacity-100'}
+              `}
+              style={{ top: '50%', transform: 'translateY(-50%)' }}
+            >
+              Off
+            </span>
+            <span
+              className={`absolute left-1.5 text-[8.5px]  font-bold font-sans transition-opacity duration-200 ease-in-out
+                ${isCompareModeEnabled ? 'text-gray-400 opacity-100' : 'text-gray-400 opacity-0'}
+              `}
+              style={{ top: '50%', transform: 'translateY(-50%)' }}
+            >
+              On
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
