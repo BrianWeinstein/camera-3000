@@ -962,7 +962,7 @@ const App = () => {
           onClick={handleCancelProcess} // Add onClick handler here
         >
           <img
-            src="https://brianweinstein.github.io/real-photo-camera-app/favicon.png"
+            src="https://brianweinstein.github.io/rpc-dev/favicon.png"
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
@@ -1213,8 +1213,8 @@ const App = () => {
         )}
       </div>
       {/* Small text at the very bottom */}
-      <div className="mt-4 mb-1 text-[9.5px] text-gray-400 text-center flex items-center justify-center space-x-2"> {/* Reduced mt-8 to mt-4, mb-2 to mb-1 */}
-        <p><a href="https://github.com/BrianWeinstein/real-photo-camera-app" target="_blank" className="hover:underline">About</a></p>
+      <div className="mt-2 mb-1 text-[9.5px] text-gray-400 text-center flex items-center justify-center space-x-2"> {/* Reduced mt-8 to mt-4, mb-2 to mb-1 */}
+        <p><a href="https://github.com/BrianWeinstein/rpc-dev" target="_blank" className="hover:underline">About</a></p>
         <p>•</p> {/* Separator */}
         {/* Debug Mode Toggle Switch */}
         <div className="flex items-center space-x-1">
