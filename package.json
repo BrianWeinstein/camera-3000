@@ -1,9 +1,9 @@
 {
-  "name": "real-photo-camera-app",
+  "name": "camera-3000",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://brianweinstein.github.io/real-photo-camera-app/",
+  "homepage": "https://brianweinstein.github.io/camera-3000/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
