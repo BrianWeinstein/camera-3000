@@ -231,7 +231,7 @@ const App = () => {
       const imageMimeType = mimeType.split(':')[1];
       console.log('Image MIME type:', imageMimeType);
 
-      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name. If people appear in the photo, describe their apperances (skin tone, facial features, etc.) in detail.`;
+      const describePrompt = `Describe this photo in great detail. Do not mention notable people or landmarks by name.`;
       const describePayload = {
         contents: [
           {
@@ -1091,7 +1091,7 @@ const App = () => {
             {/* Cancel Camera Button (on its own line) */}
             <button
               onClick={stopCamera}
-                className="mt-0 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-100 text-gray-800 text-xs hover:bg-gray-400"
+                className="py-2 px-4 text-xs rounded-md font-normal transition duration-200 ease-in-out shadow-sm w-fit mx-auto border border-gray-50"
             >
               Close Camera
             </button>
@@ -1103,7 +1103,7 @@ const App = () => {
           <div className="mt-4 flex flex-col space-y-3 items-center">
             <button
               onClick={() => setShowSideBySide(!showSideBySide)}
-              className="py-2 px-4 text-xs rounded-md font-normal transition duration-200 ease-in-out shadow-md hover:shadow-md w-fit mx-auto"
+                className="py-2 px-4 text-xs rounded-md font-normal transition duration-200 ease-in-out shadow-sm w-fit mx-auto border border-gray-50"
             >
               {showSideBySide ? 'Back' : 'Compare'}
             </button>
@@ -1185,7 +1185,7 @@ const App = () => {
               {/* "Cancel Photo" button */}
               <button
                 onClick={handleCancelProcess}
-                className="mt-2 py-2 px-4 rounded-md font-normal transition duration-200 ease-in-out shadow-sm hover:shadow-md bg-gray-300 text-gray-800 text-xs hover:bg-gray-400"
+                className="py-2 px-4 mt-3 text-xs rounded-md font-normal transition duration-200 ease-in-out shadow-sm w-fit mx-auto border border-gray-50"
               >
                 Cancel
               </button>
@@ -1207,7 +1207,7 @@ const App = () => {
         {/* Description text display at the very bottom, only visible in debug mode */}
         {isDebugMode && descriptionText && (
           <div className="mt-4 p-4 bg-gray-50 border border-gray-200 text-gray-700 rounded-md text-left text-sm leading-relaxed max-w-lg mx-auto">
-            {/* <p className="font-semibold mb-2">Description:</p> */}
+            <p className="font-semibold mb-2">Description https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent</p>
             <p className="whitespace-pre-wrap">{descriptionText}</p>
           </div>
         )}
