@@ -962,7 +962,7 @@ const App = () => {
           onClick={handleCancelProcess} // Add onClick handler here
         >
           <img
-            src="https://brianweinstein.github.io/rpc-dev/favicon.png"
+            src="https://brianweinstein.github.io/camera-3000/favicon.png"
             alt="App Logo"
             className="w-8 h-8 mr-2 object-contain"
           />
