@@ -1214,7 +1214,7 @@ const App = () => {
       </div>
       {/* Small text at the very bottom */}
       <div className="mt-2 mb-1 text-[9.5px] text-gray-400 text-center flex items-center justify-center space-x-2"> {/* Reduced mt-8 to mt-4, mb-2 to mb-1 */}
-        <p><a href="https://bweinstein.medium.com/e0a63e5ceaf2?source=friends_link&sk=9929ba6732a5301c01eaaa8ad3771d79" target="_blank" className="hover:underline">About</a></p>
+        <p><a href="https://bweinstein.medium.com/camera-3000-the-camera-of-the-future-e0a63e5ceaf2?source=friends_link&sk=9929ba6732a5301c01eaaa8ad3771d79" target="_blank" className="hover:underline">About</a></p>
         <p>•</p>
         <p><a href="https://github.com/BrianWeinstein/camera-3000" target="_blank" className="hover:underline">GitHub</a></p>
         <p>•</p>
